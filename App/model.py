@@ -256,7 +256,7 @@ def filtrarRequerimiento1(catalog, cat1, minCat1, maxCat1, cat2, minCat2, maxCat
                 if lt.isPresent(listaFinalArtistas, j['artist_id']) == 0:
                     lt.addLast(listaFinalArtistas, j['artist_id'])
 
-    return lista1
+    return (lt.size(listaFinalCanciones), lt.size(listaFinalArtistas))
             
     
 def buscarCaracteristica(catalog, caracteristica):

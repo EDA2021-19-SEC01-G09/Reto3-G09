@@ -1,4 +1,4 @@
-"""
+﻿"""
  * Copyright 2020, Departamento de sistemas y Computación, Universidad
  * de Los Andes
  *
@@ -70,7 +70,6 @@ while True:
         print("\nCargando información de eventos musicales....")
         controller.loadData(catalog)
         print('Se cargaron: ' + str(lt.size(catalog['todos'])))
-        print(catalog['sentimientos'])
 
     elif int(inputs[0]) == 3:
         cat1 = input('Ingrese el nombre de la característica 1: ')
