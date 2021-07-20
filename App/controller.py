@@ -41,6 +41,39 @@ def init():
 
 # Funciones para la carga de datos
 
+def loadData(catalog):
+    loadUserTrack(catalog)
+    loadContextContent(catalog)
+    loadSentimentValues(catalog)
+
+def loadUserTrack(catalog):
+    archivo = cf.data_dir + 'user_track_hashtag_timestamp-small.csv'
+    input_file = csv.DictReader(open(archivo, encoding='utf-8'), delimiter = ",")
+    
+    for file in input_file:
+        model.addHashtag(catalog, file)
+
+def loadContextContent(catalog):
+    archivo = cf.data_dir + 'context_content_features-small.csv'
+    input_file = csv.DictReader(open(archivo, encoding='utf-8'), delimiter = ",")
+    
+    for file in input_file:
+        model.addEvento(catalog, file)
+
+def loadSentimentValues(catalog):
+    archivo = cf.data_dir + 'sentiment_values.csv'
+    input_file = csv.DictReader(open(archivo, encoding='utf-8'), delimiter = ",")
+    
+    for file in input_file:
+        model.addSentimiento(catalog, file['hashtag'], file)
+
 # Funciones de ordenamiento
 
+def filtrarRequerimiento1(catalog, cat1, minCat1, maxCat1, cat2, minCat2, maxCat2):
+    return model.filtrarRequerimiento1(catalog, cat1, minCat1, maxCat1, cat2, minCat2, maxCat2)
+
 # Funciones de consulta sobre el catálogo
+
+def buscarCaracteristica(catalog, caracteristica):
+    return model.buscarCaracteristica(catalog, caracteristica)
+
