@@ -1,4 +1,4 @@
-﻿"""
+"""
  * Copyright 2020, Departamento de sistemas y Computación, Universidad
  * de Los Andes
  *
@@ -24,8 +24,13 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+from DISClib.ADT import orderedmap as om
 assert cf
+import sys
 
+
+default_limit = 1000
+sys.setrecursionlimit(default_limit*100)
 
 """
 La vista se encarga de la interacción con el usuario
@@ -58,11 +63,39 @@ while True:
 
     if int(inputs[0]) == 1:
         print("\nInicializando....")
-        # cont es el controlador que se usará de acá en adelante
-        cont = controller.init()
+        # catalog es el controlador que se usará de acá en adelante
+        catalog = controller.init()
 
     elif int(inputs[0]) == 2:
-        pass
+        print("\nCargando información de eventos musicales....")
+        controller.loadData(catalog)
+        print('Se cargaron: ' + str(lt.size(catalog['todos'])))
+        print(catalog['sentimientos'])
+
+    elif int(inputs[0]) == 3:
+        cat1 = input('Ingrese el nombre de la característica 1: ')
+
+        if controller.buscarCaracteristica(catalog, cat1) == True:
+            minCat1 = (input('Ingrese el valor mínimo de la característica 1: '))
+            maxCat1 = (input('Ingrese el valor máximo de la característica 1: '))
+            cat2 = input('Ingrese el nombre de la característica 2: ')
+
+            if controller.buscarCaracteristica(catalog, cat2) == True:
+                minCat2 = (input('Ingrese el valor mínimo de la característica 2: '))
+                maxCat2 = (input('Ingrese el valor máximo de la característica 2: '))
+                respuesta = controller.filtrarRequerimiento1(catalog, cat1, minCat1, maxCat1, cat2, minCat2, maxCat2)
+                print('----------------------------------------------------------------')
+                print('El total de eventos de escucha registrados son: ' + str(respuesta[0]))
+                print('El número de artistas (sin repetición) registrados son: ' + str(respuesta[1]))
+            
+            else:
+                print('La característica ingresada no existe')
+
+        else:
+            print('La característica ingresada no existe')
+
+                
+
 
     else:
         sys.exit(0)
