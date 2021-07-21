@@ -52,6 +52,14 @@ def printMenu():
     print("0- Salir")
     print("*******************************************")
 
+
+def displayCarga(lst):
+    final = lt.size(lst) + 1
+    posiciones = list(range(1, 6)) + list(range(final - 5, final))
+    for pos in posiciones:
+        event = lt.getElement(lst, pos)
+        print(event)
+
 catalog = None
 
 """
@@ -70,6 +78,11 @@ while True:
         print("\nCargando información de eventos musicales....")
         controller.loadData(catalog)
         print('Se cargaron: ' + str(lt.size(catalog['todos'])))
+        print('Se cargaron: ' + str(lt.size(catalog['artistas'])) + ' artistas diferentes')
+        print('Se cargaron: ' + str(lt.size(catalog['identificadores'])) + ' eventos diferentes')
+        print('A continuación se presentan los 5 primeros y 5 últimos eventos de escucha registrados: ')
+        displayCarga(catalog['todos'])
+        
 
     elif int(inputs[0]) == 3:
         cat1 = input('Ingrese el nombre de la característica 1: ')
@@ -86,14 +99,12 @@ while True:
                 print('----------------------------------------------------------------')
                 print('El total de eventos de escucha registrados son: ' + str(respuesta[0]))
                 print('El número de artistas (sin repetición) registrados son: ' + str(respuesta[1]))
-            
+
             else:
                 print('La característica ingresada no existe')
 
         else:
             print('La característica ingresada no existe')
-
-                
 
 
     else:

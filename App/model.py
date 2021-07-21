@@ -52,6 +52,7 @@ def newAnalyzer():
                 'acousticness': None,
                 'energy': None,
                 'hashtag': None,
+                'artistas': None,
                 'sentimientos': None
                 }
     catalog['todos'] = lt.newList('SINGLE_LINKED', compareIds)
@@ -86,6 +87,16 @@ def newAnalyzer():
     catalog['hashtag'] = om.newMap(omaptype='RBT',
                                       comparefunction=compare)
 
+    catalog['artistas']= mp.newMap(20849,
+                                   maptype = 'PROBING',
+                                   loadfactor = 0.5,
+                                   comparefunction= cmpArtists)
+
+    catalog['identificadores'] = mp.newMap(61253,
+                                   maptype = 'PROBING',
+                                   loadfactor = 0.5,
+                                   comparefunction= cmpIds)
+
     catalog['sentimientos']= mp.newMap(211,
                                    maptype = 'PROBING',
                                    loadfactor = 0.5,
@@ -106,7 +117,8 @@ def addEvento(catalog, evento):
     addTempo(catalog['tempo'], evento)
     addAcousticness(catalog['acousticness'], evento)
     addEnergy(catalog['energy'], evento)
-
+    addArtista(catalog['artistas'], evento)
+    addIdentificador(catalog['identificadores'], evento)
     return catalog
 
 def addHashtag(catalog, evento):
@@ -226,12 +238,46 @@ def addEnergy(catalog, evento):
     lt.addLast(newEntry, evento)
     return catalog
 
+def addArtista(catalog, evento):
+    existartist = mp.contains(catalog, evento['artist_id'])
+    if existartist:
+        entry = mp.get(catalog, evento['artist_id'])
+        artist = me.getValue(entry)
+    else:
+        artist = newArtist(evento['artist_id'])
+        mp.put(catalog, evento['artist_id'], artist)
+    lt.addLast(artist['eventos'], evento)
+    return catalog
+
+def addIdentificador(catalog, evento):
+    exists = mp.contains(catalog, evento['track_id'])
+    if exists:
+        entry = mp.get(catalog, evento['track_id'])
+        id = me.getValue(entry)
+    else:
+        id = newIdentificador(evento['track_id'])
+        mp.put(catalog, evento['track_id'], id)
+    lt.addLast(id['eventos'], evento)
+    return catalog
+
 def newdata():
     entry = lt.newList('SINGLE_LINKED', compare)
     return entry
 
-
 # Funciones para creacion de datos
+def newArtist(artistName):
+    artist = {'name' : "",
+            'eventos' : None}
+    artist['name'] = artistName
+    artist['eventos'] = lt.newList("ARRAY_LIST", cmpArtists)
+    return artist
+
+def newIdentificador(id):
+    identificador = {'code' : "",
+            'eventos' : None}
+    identificador['code'] = id
+    identificador['eventos'] = lt.newList("ARRAY_LIST", cmpIds)
+    return identificador
 
 # Funciones de consulta
 
@@ -285,6 +331,26 @@ def compare(eve1, eve2):
     if (eve1 == eve2):
         return 0
     elif (eve1 > eve2):
+        return 1
+    else:
+        return -1
+
+def cmpArtists(keyname, artist):
+
+    authentry = me.getKey(artist)
+    if (keyname == authentry):
+        return 0
+    elif (keyname > authentry):
+        return 1
+    else:
+        return -1
+
+def cmpIds(keyname, id):
+
+    authentry = me.getKey(id)
+    if (keyname == authentry):
+        return 0
+    elif (keyname > authentry):
         return 1
     else:
         return -1
