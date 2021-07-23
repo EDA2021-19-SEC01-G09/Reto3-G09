@@ -303,7 +303,47 @@ def filtrarRequerimiento1(catalog, cat1, minCat1, maxCat1, cat2, minCat2, maxCat
                     lt.addLast(listaFinalArtistas, j['artist_id'])
 
     return (lt.size(listaFinalCanciones), lt.size(listaFinalArtistas))
-            
+
+def filtrarRequerimiento2(catalog, minLiv, maxLiv, minSpe, maxSpe):
+    lst = om.values(catalog['liveness'], minLiv, maxLiv)
+    comb = om.newMap(omaptype='RBT', comparefunction=compare)
+    listaFinalCanciones = lt.newList('ARRAY_LIST')
+    listaFiltrada = lt.newList('ARRAY_LIST')
+
+    for i in lt.iterator(lst):
+        for j in lt.iterator(i):
+            addSpeechiness(comb, j)
+
+    listaSemifiltrada = om.values(comb, minSpe, maxSpe)
+
+    for i in lt.iterator(listaSemifiltrada):
+        for j in lt.iterator(i):
+            lt.addLast(listaFiltrada, j)
+            if lt.isPresent(listaFinalCanciones, j['track_id']) == 0:
+                lt.addLast(listaFinalCanciones, j['track_id'])
+
+    return (listaFiltrada, listaFinalCanciones)
+
+def filtrarRequerimiento3(catalog, minVal, maxVal, minTemp, maxTemp):
+    lst = om.values(catalog['valence'], minVal, maxVal)
+    comb = om.newMap(omaptype='RBT', comparefunction=compare)
+    listaFinalCanciones = lt.newList('ARRAY_LIST')
+    listaFiltrada = lt.newList('ARRAY_LIST')
+
+    for i in lt.iterator(lst):
+        for j in lt.iterator(i):
+            addTempo(comb, j)
+
+    listaSemifiltrada = om.values(comb, minTemp, maxTemp)
+
+    for i in lt.iterator(listaSemifiltrada):
+        for j in lt.iterator(i):
+            lt.addLast(listaFiltrada, j)
+            if lt.isPresent(listaFinalCanciones, j['track_id']) == 0:
+                lt.addLast(listaFinalCanciones, j['track_id'])
+
+    return (listaFiltrada, listaFinalCanciones)
+
     
 def buscarCaracteristica(catalog, caracteristica):
     lista = lt.newList('ARRAY_LIST')
@@ -313,8 +353,6 @@ def buscarCaracteristica(catalog, caracteristica):
         return True
     else:
         return False
-
-
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 

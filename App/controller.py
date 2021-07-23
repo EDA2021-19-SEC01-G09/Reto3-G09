@@ -72,6 +72,12 @@ def loadSentimentValues(catalog):
 def filtrarRequerimiento1(catalog, cat1, minCat1, maxCat1, cat2, minCat2, maxCat2):
     return model.filtrarRequerimiento1(catalog, cat1, minCat1, maxCat1, cat2, minCat2, maxCat2)
 
+def filtrarRequerimiento2(catalog, minLiv, maxLiv, minSpe, maxSpe):
+    return model.filtrarRequerimiento2(catalog, minLiv, maxLiv, minSpe, maxSpe)
+
+def filtrarRequerimiento3(catalog, minVal, maxVal, minTemp, maxTemp):
+    return model.filtrarRequerimiento3(catalog, minVal, maxVal, minTemp, maxTemp)
+
 # Funciones de consulta sobre el catálogo
 
 def buscarCaracteristica(catalog, caracteristica):

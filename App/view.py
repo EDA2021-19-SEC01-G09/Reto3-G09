@@ -27,6 +27,7 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
 assert cf
 import sys
+import random
 
 
 default_limit = 1000
@@ -59,6 +60,14 @@ def displayCarga(lst):
     for pos in posiciones:
         event = lt.getElement(lst, pos)
         print(event)
+
+def displayRandom(lst, car1, car2, n = 8):
+    txt = list(range(1, n + 1))
+    selecc = random.sample(list(range(1, lt.size(lst) + 1)), n)
+    for x, y in zip(txt, selecc):
+        event = lt.getElement(lst, y)
+        print('Track ' + str(x) + ': ' + str(event['track_id']) + ' con ' + car1 + " " + str(event[car1]) + " y " + car2 + " " + str(event[car2]))
+
 
 catalog = None
 
@@ -106,6 +115,43 @@ while True:
         else:
             print('La característica ingresada no existe')
 
+    elif int(inputs[0]) == 4:
+        minLiv = input('Ingrese el valor mínimo de liveness: ')
+        maxLiv = input('Ingrese el valor máximo de liveness: ')
+        minSpe = input('Ingrese el valor mínimo de speechiness: ')
+        maxSpe = input('Ingrese el valor máximo de speechiness: ')
+        respuesta = controller.filtrarRequerimiento2(catalog, minLiv, maxLiv, minSpe, maxSpe)
+        print('----------------------------------------------------------------')
+        print('El total de pistas únicas en los eventos de escucha es: ' + str(lt.size(respuesta[1])))
+        print('----------------------------------------------------------------')
+        print('\n------------------Selección aleatoria de pistas-----------------')
+        
+        if lt.size(respuesta[0]) < 8:
+            print('-----------El filtro elegido tiene menos de 8 pistas------------')
+            displayRandom(respuesta[0], "liveness", "speechiness", lt.size(respuesta[0]))
+        
+        else:
+            print('----------------------Se presentan 8 pistas---------------------')
+            displayRandom(respuesta[0], "liveness", "speechiness")
+
+    elif int(inputs[0]) == 5:
+        minVal = input('Ingrese el valor mínimo de valence: ')
+        maxVal = input('Ingrese el valor máximo de valence: ')
+        minTemp = input('Ingrese el valor mínimo de tempo: ')
+        maxTemp = input('Ingrese el valor máximo de tempo: ')
+        respuesta = controller.filtrarRequerimiento3(catalog, minVal, maxVal, minTemp, maxTemp)
+        print('----------------------------------------------------------------')
+        print('El total de pistas únicas en los eventos de escucha es: ' + str(lt.size(respuesta[1])))
+        print('----------------------------------------------------------------')
+        print('\n------------------Selección aleatoria de pistas-----------------')
+
+        if lt.size(respuesta[0]) < 8:
+            print('-----------El filtro elegido tiene menos de 8 pistas------------')
+            displayRandom(respuesta[0], "valence", "tempo", lt.size(respuesta[0]))
+        
+        else:
+            print('----------------------Se presentan 8 pistas---------------------')
+            displayRandom(respuesta[0], "valence", "tempo")
 
     else:
         sys.exit(0)
