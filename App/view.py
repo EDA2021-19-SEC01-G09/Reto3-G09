@@ -25,6 +25,7 @@ import sys
 import controller
 from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
+from DISClib.ADT import map as mp
 assert cf
 import sys
 import random
@@ -68,6 +69,14 @@ def displayRandom(lst, car1, car2, n = 8):
         event = lt.getElement(lst, y)
         print('Track ' + str(x) + ': ' + str(event['track_id']) + ' con ' + car1 + " " + str(event[car1]) + " y " + car2 + " " + str(event[car2]))
 
+def imprimirReq4(respuesta, generos):
+    for i in generos:
+        print('=========== ' + str(i) + ' ===========')
+        print('El total de eventos de escucha de este genero son: ' + str((mp.get(respuesta[1], i))['value'][1]))
+        print('El total de artistas únicos es de: ' + str((mp.get(respuesta[1], i))['value'][0]))
+        print('Algunos artistas para ' + str(i))
+        for artistas in ((mp.get(respuesta[1], i))['value'][2])['elements']:
+            print(artistas)
 
 catalog = None
 
@@ -85,12 +94,14 @@ while True:
 
     elif int(inputs[0]) == 2:
         print("\nCargando información de eventos musicales....")
-        controller.loadData(catalog)
+        tupla = controller.loadData(catalog)
         print('Se cargaron: ' + str(lt.size(catalog['todos'])))
         print('Se cargaron: ' + str(lt.size(catalog['artistas'])) + ' artistas diferentes')
         print('Se cargaron: ' + str(lt.size(catalog['identificadores'])) + ' eventos diferentes')
         print('A continuación se presentan los 5 primeros y 5 últimos eventos de escucha registrados: ')
         displayCarga(catalog['todos'])
+        print("Tiempo [ms]: ", f"{tupla[0]:.3f}", "  ||  ",
+                            "Memoria [kB]: ", f"{tupla[1]:.3f}")
         
 
     elif int(inputs[0]) == 3:
@@ -104,10 +115,14 @@ while True:
             if controller.buscarCaracteristica(catalog, cat2) == True:
                 minCat2 = (input('Ingrese el valor mínimo de la característica 2: '))
                 maxCat2 = (input('Ingrese el valor máximo de la característica 2: '))
-                respuesta = controller.filtrarRequerimiento1(catalog, cat1, minCat1, maxCat1, cat2, minCat2, maxCat2)
+                tupla = controller.filtrarRequerimiento1(catalog, cat1, minCat1, maxCat1, cat2, minCat2, maxCat2)
+                respuesta = tupla[0]
                 print('----------------------------------------------------------------')
                 print('El total de eventos de escucha registrados son: ' + str(respuesta[0]))
                 print('El número de artistas (sin repetición) registrados son: ' + str(respuesta[1]))
+                print("Tiempo [ms]: ", f"{tupla[1]:.3f}", "  ||  ",
+                            "Memoria [kB]: ", f"{tupla[2]:.3f}")
+
 
             else:
                 print('La característica ingresada no existe')
@@ -120,7 +135,8 @@ while True:
         maxLiv = input('Ingrese el valor máximo de liveness: ')
         minSpe = input('Ingrese el valor mínimo de speechiness: ')
         maxSpe = input('Ingrese el valor máximo de speechiness: ')
-        respuesta = controller.filtrarRequerimiento2(catalog, minLiv, maxLiv, minSpe, maxSpe)
+        tupla = controller.filtrarRequerimiento2(catalog, minLiv, maxLiv, minSpe, maxSpe)
+        respuesta = tupla[0]
         print('----------------------------------------------------------------')
         print('El total de pistas únicas en los eventos de escucha es: ' + str(lt.size(respuesta[1])))
         print('----------------------------------------------------------------')
@@ -134,12 +150,17 @@ while True:
             print('----------------------Se presentan 8 pistas---------------------')
             displayRandom(respuesta[0], "liveness", "speechiness")
 
+        print("Tiempo [ms]: ", f"{tupla[1]:.3f}", "  ||  ",
+                            "Memoria [kB]: ", f"{tupla[2]:.3f}")
+
+
     elif int(inputs[0]) == 5:
         minVal = input('Ingrese el valor mínimo de valence: ')
         maxVal = input('Ingrese el valor máximo de valence: ')
         minTemp = input('Ingrese el valor mínimo de tempo: ')
         maxTemp = input('Ingrese el valor máximo de tempo: ')
-        respuesta = controller.filtrarRequerimiento3(catalog, minVal, maxVal, minTemp, maxTemp)
+        tupla = controller.filtrarRequerimiento3(catalog, minVal, maxVal, minTemp, maxTemp)
+        respuesta = tupla[0]
         print('----------------------------------------------------------------')
         print('El total de pistas únicas en los eventos de escucha es: ' + str(lt.size(respuesta[1])))
         print('----------------------------------------------------------------')
@@ -152,6 +173,43 @@ while True:
         else:
             print('----------------------Se presentan 8 pistas---------------------')
             displayRandom(respuesta[0], "valence", "tempo")
+
+        print("Tiempo [ms]: ", f"{tupla[1]:.3f}", "  ||  ",
+                            "Memoria [kB]: ", f"{tupla[2]:.3f}")
+
+
+    elif int(inputs[0]) == 6:
+        print('Genero         BPM Típico')
+        print('Reggae          60 a 90')
+        print('Down-tempo      70 a 100')
+        print('Chill-out       90 a 120')
+        print('Hip-hop         85 a 115')
+        print('Jazz and Funk  120 a 125')
+        print('Pop            100 a 130')
+        print('R&B             60 a 80')
+        print('Rock           110 a 140')
+        print('Metal          100 a 160')
+
+        pregunta = int(input('Si desea ingresar un nuevo genero pulse "1" de lo contrario pulse "0": '))
+        if pregunta == 1:
+            nuevoGenero = input('Ingrese el nombre del genero: ')
+            minValor = (input('Ingrese el valor minimo del rango de Tempo del genero: '))
+            maxValor = (input('Ingrese el valor maximo del rango de Tempo del genero: '))
+        else:
+            nuevoGenero = None
+            minValor = None
+            maxValor = None
+
+        lista = input('Ingrese la lista de generos que desea buscar (separados por "," y sin espacios): ')
+        generos = lista.lower().strip().split(",")
+        tupla = controller.filtrarRequerimiento4(catalog, generos, pregunta, nuevoGenero, minValor, maxValor)
+        respuesta = tupla[0]
+        print('------------------------------------------------------------------')
+        print('El total de eventos de escucha o reproducciones es de: ' + str(respuesta[0]))
+        imprimirReq4(respuesta, generos)
+        print("Tiempo [ms]: ", f"{tupla[1]:.3f}", "  ||  ",
+                            "Memoria [kB]: ", f"{tupla[2]:.3f}")
+
 
     else:
         sys.exit(0)

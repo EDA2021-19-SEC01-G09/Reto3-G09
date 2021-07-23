@@ -354,6 +354,47 @@ def buscarCaracteristica(catalog, caracteristica):
     else:
         return False
 
+def filtrarRequerimiento4(catalog, generos, pregunta, nuevoGenero, minValor, maxValor):
+    mapaGeneros = mp.newMap(23, maptype = 'PROBING', loadfactor = 0.5)
+    mp.put(mapaGeneros, 'reggae', [60, 90])
+    mp.put(mapaGeneros, 'down-tempo', [70, 100])
+    mp.put(mapaGeneros, 'chill-out', [90, 120])
+    mp.put(mapaGeneros, 'hip-hop', [85, 115])
+    mp.put(mapaGeneros, 'jazz and funk', [120, 125])
+    mp.put(mapaGeneros, 'pop', [100, 130])
+    mp.put(mapaGeneros, 'r&b', [60, 80])
+    mp.put(mapaGeneros, 'rock', [110, 140])
+    mp.put(mapaGeneros, 'metal', [100, 160])
+
+    if pregunta == 1:
+        mp.put(mapaGeneros, nuevoGenero, [minValor, maxValor])
+
+    mapaFinal = mp.newMap(23, maptype = 'PROBING', loadfactor = 0.5)
+    total = 0
+
+    for i in generos:
+        eventos = 0
+        lista10 = lt.newList('ARRAY_LIST')
+        valor1 = str((mp.get(mapaGeneros, str(i)))['value'][0])
+        valor2 = str((mp.get(mapaGeneros, str(i)))['value'][1])
+        generos = om.values(catalog['tempo'], valor1, valor2)
+
+        for x in lt.iterator(generos):
+            for j in lt.iterator(x):
+                total += 1
+                eventos += 1
+                if lt.isPresent(lista10, j['artist_id']) == 0:
+                    lt.addLast(lista10, j['artist_id'])
+        
+        if lt.size(lista10) < 10:
+            size = lt.size(lista10)
+        else:
+            size = 10
+
+        mp.put(mapaFinal, i, [lt.size(lista10), eventos, lt.subList(lista10, 1, size)])
+    
+    return total, mapaFinal
+    
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 def compareIds(id1, id2):
