@@ -78,6 +78,9 @@ def filtrarRequerimiento2(catalog, minLiv, maxLiv, minSpe, maxSpe):
 def filtrarRequerimiento3(catalog, minVal, maxVal, minTemp, maxTemp):
     return model.filtrarRequerimiento3(catalog, minVal, maxVal, minTemp, maxTemp)
 
+def filtrarRequerimiento4(catalog, generos, pregunta, nuevoGenero, minValor, maxValor):
+    return model.filtrarRequerimiento4(catalog, generos, pregunta, nuevoGenero, minValor, maxValor)
+
 # Funciones de consulta sobre el catálogo
 
 def buscarCaracteristica(catalog, caracteristica):
